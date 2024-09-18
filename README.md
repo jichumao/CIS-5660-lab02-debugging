@@ -1,5 +1,44 @@
 # lab02-debugging
 
+# Showcase
+[Link to Shadertoy]()
+Img Here
+# 4 Bugs
+```
+
+void raycast() {
+    ...
+    V *= len;
+    // bug here 1/5 should use correct formula
+    //H *= len * iResolution.x / iResolution.x;
+    H *= len * iResolution.x / iResolution.y;
+    ..
+}
+
+void march() {
+    t = 0.001;
+    // bug here 2/5 we need to increase the iterations to get more hit points
+    //for(int i = 0; i < 64; ++i) {
+    for(int i = 0; i < 128; ++i) {
+}
+
+Intersection sdf3D(vec3 dir, vec3 eye) {
+    ...
+    // bug here
+    // dir = reflect(eye, nor); 3/5
+    dir = reflect(dir, nor);
+    march(isect + dir * 0.01, dir, t, hitObj);
+   ...
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = fragCoord/iResolution.xy;
+    // [-1, 1]
+    // Variable should not be declared again, bug 4/5
+    uv = 2.0 * uv - vec2(1.0);
+
+```
 # Setup 
 
 Create a [Shadertoy account](https://www.shadertoy.com/). Either fork this shadertoy, or create a new shadertoy and copy the code from the [Debugging Puzzle](https://www.shadertoy.com/view/flGfRc).
