@@ -1,4 +1,73 @@
 # lab02-debugging
+* Jichu Mao
+  * [LinkedIn](https://www.linkedin.com/in/jichu-mao-a3a980226/)
+  *  [Personal Website](https://jichu.art/)
+    
+# Showcase
+
+[Link to Shadertoy](https://www.shadertoy.com/view/lXfcD2)
+![](lab2.gif)
+
+# Bugs
+Successfully identified and fixed all bugs！
+
+```
+void raycast(vec2 uv, out vec3 dir,
+             out vec3 eye, out vec3 ref) {
+...
+    vec3 H = normalize(cross(vec3(0.0, 1.0, 0.0), ref - eye));
+    vec3 V = normalize(cross(H, eye - ref));
+    V *= len;
+// bug here, should use correct formula
+    //H *= len * iResolution.x / iResolution.x;
+    H *= len * iResolution.x / iResolution.y;
+    vec3 p = ref + uv.x * H + uv.y * V;
+    dir = normalize(p - eye);
+}
+
+void march(vec3 origin, vec3 dir, out float t, out int hitObj) {
+    t = 0.001;
+// bug here  we need to increase the iterations to get more hit points
+    //for(int i = 0; i < 64; ++i) {
+    for(int i = 0; i < 128; ++i) {
+        vec3 pos = origin + t * dir;
+    	float m;
+        sceneMap3D(pos, m, hitObj);
+        if(m < 0.01) {
+            return;
+        }
+        t += m;
+    }
+    t = -1.0;
+    hitObj = -1;
+}
+
+Intersection sdf3D(vec3 dir, vec3 eye) {
+// use hitObj == -1 instead of t == -1
+    if (hitObj == -1){
+    //if(t == -1.0) {  
+        return Intersection(t, skyColor(dir), vec3(eye + 1000.0 * dir), -1);
+    }
+
+    vec3 isect = eye + t * dir;
+    vec3 nor = computeNormal(isect);
+    
+    vec3 material = computeMaterial(hitObj, isect, dir, nor);
+    // bug here
+    // dir = reflect(eye, nor); 
+    dir = reflect(dir, nor);
+...
+}
+
+// Bug here : Compiler Error,bariable should not be declared again
+void mainImage( ) {
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = fragCoord/iResolution.xy;
+    // [-1, 1]
+    // Variable should not be declared again, bug here
+    uv = 2.0 * uv - vec2(1.0);
+}
+```
 
 # Setup 
 
